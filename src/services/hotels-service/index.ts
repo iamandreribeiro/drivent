@@ -6,22 +6,22 @@ import ticketRepository from "@/repositories/ticket-repository";
 export async function getHotels(userId: number) {
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     if(!enrollment) {
-        return 404;
+        throw notFoundError();
     }
     
     const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
     if(!ticket) {
-        return 404;
+        throw notFoundError();
     }
 
     const ticketType = await ticketRepository.findTicketTypeId(ticket.ticketTypeId);
     if(ticket.status === 'RESERVED' || ticketType.isRemote || !ticketType.includesHotel) {
-        return 402;
+        throw paymentRequiredError();
     }
 
     const hotels = await hotelRepository.findHotels();
     if(!hotels) {
-        return 404;
+        throw notFoundError();
     }
 
     return hotels;
@@ -30,17 +30,17 @@ export async function getHotels(userId: number) {
 export async function getHotelRooms(hotelId: number, userId: number) {
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     if(!enrollment) {
-        return 404;
+        throw notFoundError();
     }
     
     const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
     if(!ticket) {
-        return 404;
+        throw notFoundError();
     }
 
     const ticketType = await ticketRepository.findTicketTypeId(ticket.ticketTypeId);
     if(ticket.status === 'RESERVED' || ticketType.isRemote || !ticketType.includesHotel) {
-        return 402;
+        throw paymentRequiredError();
     }
 
     const hotelRooms = await hotelRepository.findHotelRooms(hotelId);
