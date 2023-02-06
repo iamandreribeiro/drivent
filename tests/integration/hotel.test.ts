@@ -87,8 +87,6 @@ describe('GET /hotels', () => {
 
             const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
 
-            console.log(response.body);
-
             expect(response.status).toBe(httpStatus.OK);
             expect(response.body).toEqual(
                 expect.arrayContaining([
